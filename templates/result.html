@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Results</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+
+<body class="bg-light">
+
+<div class="container py-5">
+
+    <div class="text-center mb-4">
+        <img src="/{{ image_url }}" class="img-fluid rounded shadow" style="max-height: 350px;">
+    </div>
+
+    <!-- Captions -->
+    <div class="row mb-4">
+        <div class="col-md-6">
+            <div class="card shadow-sm">
+                <div class="card-header bg-primary text-white">LLaVA 7B Caption</div>
+                <div class="card-body"><p>{{ caption_llava }}</p></div>
+            </div>
+        </div>
+
+        <div class="col-md-6">
+            <div class="card shadow-sm">
+                <div class="card-header bg-success text-white">BakLLaVA 7B Caption</div>
+                <div class="card-body"><p>{{ caption_bak }}</p></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Tags -->
+    <div class="card shadow mb-4">
+        <div class="card-header bg-warning">Auto-generated Tags</div>
+        <div class="card-body">
+            {% for tag in tags %}
+                <span class="badge bg-secondary me-1">{{ tag }}</span>
+            {% endfor %}
+        </div>
+    </div>
+
+    <!-- Marketing Copy Tabs -->
+    <h4 class="mt-5 mb-3">Marketing Copy</h4>
+
+    <ul class="nav nav-tabs">
+        <li class="nav-item"><button class="nav-link active" data-bs-toggle="tab" data-bs-target="#en">English</button></li>
+        <li class="nav-item"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#cn">中文</button></li>
+        <li class="nav-item"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#fr">Français</button></li>
+    </ul>
+
+    <div class="tab-content mt-3">
+
+        <div class="tab-pane fade show active" id="en">
+            {% set content = marketing_en %}
+            {% include 'marketing_block.html' %}
+        </div>
+
+        <div class="tab-pane fade" id="cn">
+            {% set content = marketing_cn %}
+            {% include 'marketing_block.html' %}
+        </div>
+
+        <div class="tab-pane fade" id="fr">
+            {% set content = marketing_fr %}
+            {% include 'marketing_block.html' %}
+        </div>
+
+    </div>
+
+    <!-- Q&A -->
+    <div class="card shadow mt-5">
+        <div class="card-header bg-info text-white">Ask a Question About the Image</div>
+        <div class="card-body">
+            <form action="/ask" method="POST">
+                <input type="hidden" name="image_path" value="{{ image_url }}">
+                <input type="text" name="question" class="form-control" placeholder="Ask something..." required>
+                <button class="btn btn-info text-white mt-3">Ask</button>
+            </form>
+
+            {% if answer %}
+                <hr>
+                <p><strong>Answer:</strong> {{ answer }}</p>
+            {% endif %}
+        </div>
+    </div>
+
+    <a href="/" class="btn btn-secondary mt-4">← Upload Another Image</a>
+
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+
+</body>
+</html>
