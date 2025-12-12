@@ -1,95 +1,186 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>Results</title>
+    <meta charset="UTF-8">
+    <title>AI Caption Result</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <style>
+        body {
+            background: #f3f4f6;
+        }
+
+        /* ------------------------ TAG PILL ------------------------ */
+        .pill-tag {
+            background: #e5e7eb;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 14px;
+            display: inline-block;
+            margin: 4px;
+            max-width: 200px;
+            white-space: normal;
+            word-wrap: break-word;
+        }
+
+        /* -------------------- CHAT BUBBLE (ANSWER) -------------------- */
+        .bubble {
+            max-width: 85%;
+            padding: 14px 18px;
+            border-radius: 16px;
+            margin-bottom: 10px;
+            font-size: 16px;
+            line-height: 1.45;
+        }
+
+        .bubble-user {
+            background: #dbeafe;
+            margin-left: auto;
+            border-bottom-right-radius: 4px;
+        }
+
+        .bubble-ai {
+            background: #e5e7eb;
+            margin-right: auto;
+            border-bottom-left-radius: 4px;
+        }
+
+        /* Apple风格卡片 */
+        .apple-card {
+            border-radius: 22px;
+            padding: 28px;
+            background: white;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+        }
+    </style>
 </head>
 
-<body class="bg-light">
+<body>
+{% include 'navbar.html' %}
 
 <div class="container py-5">
 
+    <!-- Image -->
     <div class="text-center mb-4">
         <img src="/{{ image_url }}" class="img-fluid rounded shadow" style="max-height: 350px;">
     </div>
 
     <!-- Captions -->
-    <div class="row mb-4">
+    <div class="row g-4 mb-4">
         <div class="col-md-6">
-            <div class="card shadow-sm">
-                <div class="card-header bg-primary text-white">LLaVA 7B Caption</div>
-                <div class="card-body"><p>{{ caption_llava }}</p></div>
+            <div class="apple-card">
+                <h5 class="fw-bold text-primary">LLaVA Caption</h5>
+                <p>{{ caption_llava }}</p>
             </div>
         </div>
 
         <div class="col-md-6">
-            <div class="card shadow-sm">
-                <div class="card-header bg-success text-white">BakLLaVA 7B Caption</div>
-                <div class="card-body"><p>{{ caption_bak }}</p></div>
+            <div class="apple-card">
+                <h5 class="fw-bold text-success">BakLLaVA Caption</h5>
+                <p>{{ caption_bak }}</p>
             </div>
         </div>
     </div>
 
     <!-- Tags -->
-    <div class="card shadow mb-4">
-        <div class="card-header bg-warning">Auto-generated Tags</div>
-        <div class="card-body">
-            {% for tag in tags %}
-                <span class="badge bg-secondary me-1">{{ tag }}</span>
-            {% endfor %}
-        </div>
+    <div class="apple-card mb-4">
+        <h5 class="fw-bold mb-3">Tags</h5>
+        {% for tag in tags %}
+            <span class="pill-tag">{{ tag }}</span>
+        {% endfor %}
     </div>
 
     <!-- Marketing Copy Tabs -->
-    <h4 class="mt-5 mb-3">Marketing Copy</h4>
+    <div class="apple-card mb-4">
+        <h4 class="fw-bold mb-3">Marketing Copy</h4>
 
-    <ul class="nav nav-tabs">
-        <li class="nav-item"><button class="nav-link active" data-bs-toggle="tab" data-bs-target="#en">English</button></li>
-        <li class="nav-item"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#cn">中文</button></li>
-        <li class="nav-item"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#fr">Français</button></li>
-    </ul>
+        <ul class="nav nav-tabs">
+            <li class="nav-item"><button class="nav-link active" data-bs-toggle="tab" data-bs-target="#en">English</button></li>
+            <li class="nav-item"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#cn">中文</button></li>
+            <li class="nav-item"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#fr">Français</button></li>
+        </ul>
 
-    <div class="tab-content mt-3">
+        <div class="tab-content mt-3">
+            <div class="tab-pane fade show active" id="en">
+                {% set content = marketing_en %}
+                {% include 'marketing_block.html' %}
+            </div>
 
-        <div class="tab-pane fade show active" id="en">
-            {% set content = marketing_en %}
-            {% include 'marketing_block.html' %}
-        </div>
+            <div class="tab-pane fade" id="cn">
+                {% set content = marketing_cn %}
+                {% include 'marketing_block.html' %}
+            </div>
 
-        <div class="tab-pane fade" id="cn">
-            {% set content = marketing_cn %}
-            {% include 'marketing_block.html' %}
-        </div>
+            <div class="tab-pane fade" id="fr">
+                {% set content = marketing_fr %}
+                {% include 'marketing_block.html' %}
+            </div>
 
-        <div class="tab-pane fade" id="fr">
-            {% set content = marketing_fr %}
-            {% include 'marketing_block.html' %}
-        </div>
-
-    </div>
-
-    <!-- Q&A -->
-    <div class="card shadow mt-5">
-        <div class="card-header bg-info text-white">Ask a Question About the Image</div>
-        <div class="card-body">
-            <form action="/ask" method="POST">
-                <input type="hidden" name="image_path" value="{{ image_url }}">
-                <input type="text" name="question" class="form-control" placeholder="Ask something..." required>
-                <button class="btn btn-info text-white mt-3">Ask</button>
-            </form>
-
-            {% if answer %}
-                <hr>
-                <p><strong>Answer:</strong> {{ answer }}</p>
-            {% endif %}
         </div>
     </div>
 
-    <a href="/" class="btn btn-secondary mt-4">← Upload Another Image</a>
-    <a href="/download/pdf" class="btn btn-danger mt-3">Download PDF</a>
-    <a href="/download/zip" class="btn btn-secondary mt-3">Download ZIP</a>
+
+    <!-- ASK Q&A Section -->
+    <div class="apple-card mb-4">
+
+        <h4 class="fw-bold mb-3">Ask a Question About the Image</h4>
+
+        {% if question %}
+        <div class="bubble bubble-user">
+            {{ question }}
+        </div>
+        {% endif %}
+
+        {% if answer %}
+        <div id="answer-block" class="bubble bubble-ai">
+            {{ answer }}
+        </div>
+        {% endif %}
+
+        <!-- form -->
+        <form action="/ask" method="POST" class="mt-3">
+
+            <!-- 关键修复：加入 record_id -->
+            <input type="hidden" name="record_id" value="{{ record_id }}">
+            <input type="hidden" name="image_path" value="{{ image_url }}">
+
+            <input type="text" name="question" class="form-control form-control-lg mb-3" placeholder="Ask something..." required>
+
+            <button class="btn btn-primary btn-lg px-4">Ask</button>
+        </form>
+    </div>
+
+
+    <!-- Buttons -->
+    <div class="d-flex gap-3 mt-4">
+        <a href="/" class="btn btn-secondary btn-lg">← Upload Another Image</a>
+        <a href="/download/pdf/{{ record_id }}" class="btn btn-danger btn-lg">Download PDF</a>
+        <a href="/download/zip/{{ record_id }}" class="btn btn-dark btn-lg">Download ZIP</a>
+    </div>
 
 </div>
+
+
+{% if answer %}
+<script>
+    window.onload = function () {
+        const block = document.getElementById("answer-block");
+        if (!block) return;
+
+        // 不从顶部滚动，只在必要时调整视图
+        const rect = block.getBoundingClientRect();
+        const isVisible = (
+            rect.top >= 0 &&
+            rect.bottom <= (window.innerHeight || document.documentElement.clientHeight)
+        );
+
+        if (!isVisible) {
+            block.scrollIntoView({ behavior: "instant", block: "center" });
+        }
+    };
+</script>
+{% endif %}
+
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 
